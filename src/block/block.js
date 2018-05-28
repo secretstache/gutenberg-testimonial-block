@@ -8,9 +8,7 @@ import './editor.scss';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { RichText, PlainText } = wp.editor;
-
-var el = wp.element.createElement;
+const { RichText, PlainText } = wp.editor; // Import RichText And PlainText components from wp.editor
 
 /**
  * Registers a new block provided a unique name and an object defining its
@@ -28,7 +26,7 @@ registerBlockType( 'ssm/block-testimonial', {
 	title: __( 'Testimonial' ), // Block title.
 	icon: 'testimonial', // Block icon from Dashicons → https://developer.wordpress.org/resource/dashicons/.
 	category: 'common', // Block category — Group blocks together based on common traits E.g. common, formatting, layout widgets, embed.
-	keywords: [ // Limit to 3 keywords (be careful!)
+	keywords: [ // Limit to 3 keywords
 		__( 'Testimonial' ),
 		__( 'Gutenberg Block' ),
 		__( 'Secret Stache Media' ),
@@ -70,39 +68,42 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		return (
 			<div className='testimonial'>
+
 				{  isSelected ? (
-				<div>					
 				
-				<h3>{ __('Quote: ') }</h3>
-						
-				<PlainText
-					tagName = 'p'
-					className = 'quote'
-					onChange = { onChangeQuote }
-					placeholder = { __( 'Quote' ) }
-					value = { quote }
-				/>
+				<div>					
+					<h3>{ __('Quote: ') }</h3>
+							
+					<PlainText
+						tagName = 'p'
+						className = 'quote'
+						onChange = { onChangeQuote }
+						placeholder = { __( 'Quote' ) }
+						value = { quote }
+					/>
 
-				<h3>{ __('Source: ') }</h3>
+					<h3>{ __('Source: ') }</h3>
 
-				<RichText 
-					tagName = 'span'
-					className = 'source'
-					onChange = { onChangeSource }
-					placeholder = { __( 'Source' ) }
-					value = { source }
-				/>
-
+					<RichText 
+						tagName = 'span'
+						className = 'source'
+						onChange = { onChangeSource }
+						placeholder = { __( 'Source' ) }
+						value = { source }
+					/>
 				</div>
 				
 			) : (
+
 				<div>
+
 					<p className='quote'> 
 						{ quote }
 					</p>
 					<span className='source'> 
 						{ source }
 					</span>
+
 				</div>
 			)}
 
@@ -126,12 +127,14 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		return (
 			<div className='testimonial'>
+
 				<p className='quote'> 
 					{ quote }
 				</p>
 				<span className='source'> 
 					{ source }
 				</span>
+				
 			</div>
 		);
 	},
