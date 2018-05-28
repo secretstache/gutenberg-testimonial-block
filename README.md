@@ -1,9 +1,10 @@
-This is Gutenberg plugin that adds support of Testimonial block (created via create-guten-block).
-This project was bootstrapped with [Create Guten Block](https://github.com/ahmadawais/create-guten-block).
+This is Gutenberg plugin that adds support of Testimonial block to your WP installation.
 
-Below you will find some information on how to run scripts.
+The project was bootstrapped with [Create Guten Block](https://github.com/ahmadawais/create-guten-block).
 
->You can find the most recent version of this guide [here](https://github.com/ahmadawais/create-guten-block).
+>The most recent version of bootstrapper can be found [here](https://github.com/ahmadawais/create-guten-block).
+
+Some useful terminal commands:
 
 ## 👉  `npm start`
 - Use to compile and run the block in development mode.
