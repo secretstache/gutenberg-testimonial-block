@@ -10,8 +10,8 @@ import icon from './icon.js';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { RichText, PlainText, BlockControls } = wp.editor; // Import components from wp.editor
-const { Toolbar, Button, Tooltip } = wp.components;
+const { RichText, PlainText, BlockControls, InspectorControls } = wp.editor; // Import components from wp.editor
+const { Toolbar, Button, Tooltip, PanelBody, PanelRow, FormToggle } = wp.components; // Import components from wp.components
 /**
  * Registers a new block provided a unique name and an object defining its
  * behavior. Once registered, the block is made editor as an option to any
@@ -84,6 +84,26 @@ registerBlockType( 'ssm/block-testimonial', {
 		return (
 			<div className='testimonial'>
 
+				<InspectorControls>
+					<PanelBody
+						title={ __( 'Basic' ) }
+					>
+						<PanelRow>
+							<label
+								htmlFor="quote-sign-form-toggle"
+							>
+								{ __( 'Quote Sign' ) }
+							</label>
+							<FormToggle
+								id="quote-sign-form-toggle"
+								label={ __( 'Quote Sign') }
+								checked={ quoteSign }
+								onChange={ toggleQuoteSign }
+							/>
+						</PanelRow>
+					</PanelBody>
+				</InspectorControls>
+
 				<BlockControls key="controls">
 					<Toolbar>
 						<Tooltip text={ __( 'Add Quote Sign' )  }>
@@ -102,7 +122,10 @@ registerBlockType( 'ssm/block-testimonial', {
 
 				{  isSelected ? (
 				
-				<div className='testimonial-inner'>					
+				<div className={classnames(
+					'testimonial-inner',
+					{ 'quote-sign': quoteSign },
+				)}>					
 					<h3>{ __('Quote: ') }</h3>
 							
 					<PlainText
