@@ -10,7 +10,7 @@ import icon from './icon.js';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { RichText, PlainText, BlockControls, AlignmentToolbar } = wp.editor; // Import components from wp.editor
+const { RichText, PlainText, BlockControls } = wp.editor; // Import components from wp.editor
 const { Toolbar, Button, Tooltip } = wp.components;
 /**
  * Registers a new block provided a unique name and an object defining its
@@ -44,9 +44,6 @@ registerBlockType( 'ssm/block-testimonial', {
 			source: 'children',
 			selector: 'span.source'
 		},
-		alignment: {
-			type: 'string',
-		},
 		quoteSign: {
 			type: 'boolean',
 			default: false
@@ -65,7 +62,6 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
-		var alignment = props.attributes.alignment;
 		var quoteSign = props.attributes.quoteSign;
 		var isSelected = props.isSelected;
 
@@ -75,10 +71,6 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		function onChangeSource( newSource ) {
 			props.setAttributes( { source: newSource } );
-		}
-
-		function onChangeAlignment( newAlignment ) {
-			props.setAttributes( { alignment: newAlignment } );
 		}
 
 		function toggleQuoteSign() {
@@ -93,11 +85,6 @@ registerBlockType( 'ssm/block-testimonial', {
 			<div className='testimonial'>
 
 				<BlockControls key="controls">
-					<AlignmentToolbar
-						value={ alignment }
-						onChange={ onChangeAlignment }
-					/>
-
 					<Toolbar>
 						<Tooltip text={ __( 'Add Quote Sign' )  }>
 							<Button className={ classnames(
@@ -122,7 +109,6 @@ registerBlockType( 'ssm/block-testimonial', {
 						tagName = 'p'
 						className = 'quote'
 						onChange = { onChangeQuote }
-						style = { { textAlign : alignment } }
 						placeholder = { __( 'Quote' ) }
 						value = { quote }
 					/>
@@ -133,7 +119,6 @@ registerBlockType( 'ssm/block-testimonial', {
 						tagName = 'span'
 						className = 'source'
 						onChange = { onChangeSource }
-						style = { { textAlign : alignment } }
 						placeholder = { __( 'Source' ) }
 						value = { source }
 					/>
@@ -171,7 +156,6 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
-		var alignment = props.attributes.alignment;
 		var quoteSign = props.attributes.quoteSign;
 
 		return (
