@@ -1,4 +1,6 @@
-var icon = <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 475.082 475.081">
+const icons = {};
+
+icons.quoteSign = <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" viewBox="0 0 475.082 475.081">
 <g>
 	<g>
 		<path d="M164.45,219.27h-63.954c-7.614,0-14.087-2.664-19.417-7.994c-5.327-5.33-7.994-11.801-7.994-19.417v-9.132
@@ -20,5 +22,10 @@ var icon = <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" wid
 
 </svg>
 
+icons.remove = <svg width='20px' height='20px' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'>
+<path d='m50 2.5c-26.199 0-47.5 21.301-47.5 47.5s21.301 47.5 47.5 47.5 47.5-21.301 47.5-47.5-21.301-47.5-47.5-47.5zm24.898 62.301l-10.199 10.199-14.801-14.801-14.801 14.801-10.199-10.199 14.801-14.801-14.801-14.801 10.199-10.199 14.801 14.801 14.801-14.801 10.199 10.199-14.801 14.801z'
+/>
+</svg>;
 
-export default icon;
+
+export default icons;

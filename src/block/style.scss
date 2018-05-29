@@ -45,3 +45,17 @@
 .testimonial-inner.quote-sign:before {
   margin-left: 0!important;
 }
+
+.testimonial .image-wrapper {
+  width: 400px;
+  position: relative;
+}
+
+.testimonial .remove-image {
+  position: absolute;
+  right: -7px;
+}
+
+.testimonial .testimonial-image {
+  margin-top: 30px;
+}

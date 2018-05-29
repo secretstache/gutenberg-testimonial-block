@@ -6,11 +6,11 @@
 import './style.scss';
 import './editor.scss';
 import classnames from 'classnames';
-import icon from './icon.js';
+import icons from './icons.js';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { RichText, PlainText, BlockControls, InspectorControls } = wp.editor; // Import components from wp.editor
+const { RichText, PlainText, BlockControls, InspectorControls, MediaUpload } = wp.editor; // Import components from wp.editor
 const { Toolbar, Button, Tooltip, PanelBody, PanelRow, FormToggle } = wp.components; // Import components from wp.components
 /**
  * Registers a new block provided a unique name and an object defining its
@@ -47,6 +47,21 @@ registerBlockType( 'ssm/block-testimonial', {
 		quoteSign: {
 			type: 'boolean',
 			default: false
+		},
+		imgURL: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'src',
+			selector: 'img',
+		},
+		imgID: {
+			type: 'number',
+		},
+		imgAlt: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'alt',
+			selector: 'img',
 		}
 	},
 
@@ -63,6 +78,9 @@ registerBlockType( 'ssm/block-testimonial', {
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
 		var quoteSign = props.attributes.quoteSign;
+		var imgURL = props.attributes.imgURL;
+		var imgID = props.attributes.imgID;
+		var imgAlt = props.attributes.imgAlt;
 		var isSelected = props.isSelected;
 
 		function onChangeQuote( newQuote ) {
@@ -79,6 +97,14 @@ registerBlockType( 'ssm/block-testimonial', {
 			} else {
 				props.setAttributes( { quoteSign: true } )				
 			}
+		}
+
+		function onSelectImage( img ) {
+			props.setAttributes( { imgURL: img.url, imgID: img.id, imgAlt: img.alt} )
+		}
+
+		function onRemoveImage( img ) {
+			props.setAttributes( { imgURL: null, imgID: null, imgAlt: null} )
 		}
 
 		return (
@@ -114,7 +140,7 @@ registerBlockType( 'ssm/block-testimonial', {
 							) }
 							onClick={ toggleQuoteSign }
 							>
-							{icon}
+							{icons.quoteSign}
 							</Button>
 						</Tooltip>
 					</Toolbar>
@@ -122,46 +148,92 @@ registerBlockType( 'ssm/block-testimonial', {
 
 				{  isSelected ? (
 				
-				<div className={classnames(
-					'testimonial-inner',
-					{ 'quote-sign': quoteSign },
-				)}>					
-					<h3>{ __('Quote: ') }</h3>
-							
-					<PlainText
-						tagName = 'p'
-						className = 'quote'
-						onChange = { onChangeQuote }
-						placeholder = { __( 'Quote' ) }
-						value = { quote }
-					/>
+					<div className={classnames(
+						'testimonial-inner',
+						{ 'quote-sign': quoteSign },
+					)}>					
+						<h3>{ __('Quote: ') }</h3>
+								
+						<PlainText
+							tagName = 'p'
+							className = 'quote'
+							onChange = { onChangeQuote }
+							placeholder = { __( 'Quote' ) }
+							value = { quote }
+						/>
 
-					<h3>{ __('Source: ') }</h3>
+						<h3>{ __('Source: ') }</h3>
 
-					<RichText 
-						tagName = 'span'
-						className = 'source'
-						onChange = { onChangeSource }
-						placeholder = { __( 'Source' ) }
-						value = { source }
-					/>
-				</div>
+						<RichText 
+							tagName = 'span'
+							className = 'source'
+							onChange = { onChangeSource }
+							placeholder = { __( 'Source' ) }
+							value = { source }
+						/>
+
+						{ ! imgID ? (
+							<div className="testimonial-image">
+								<MediaUpload
+									onSelect={ onSelectImage }
+									type="image"
+									value={ props.attributes.imgID }
+									render={ ( { open } ) => (
+										<Button
+											className="components-button button button-medium"
+											onClick={ open }>
+											Upload Image
+										</Button>
+									) }
+								/>
+							</div>
+
+							) : (
+								<div className="testimonial-image">
+									<p class="image-wrapper">
+										<img
+											src={ imgURL }
+											alt={ imgAlt }
+										/>
+
+										{ isSelected ? (
+
+											<Button
+												className="remove-image"
+												onClick={ onRemoveImage }
+											>
+												{ icons.remove }
+											</Button>
+
+										) : null }
+
+									</p>
+								</div>
+							)}
+					</div>
 				
-			) : (
+				) : (
 
-				<div className={classnames(
-					'testimonial-outer',
-					{ 'quote-sign': quoteSign },
-				)}>
-					<p className='quote' > 
-						{ quote + " - " }
-					</p>
-					<span className='source'> 
-						{ source }
-					</span>
-				</div>
-			)}
-
+					<div className={classnames(
+						'testimonial-outer',
+						{ 'quote-sign': quoteSign },
+					)}>
+						<p className='quote' > 
+							{ quote + " - " }
+						</p>
+						<span className='source'> 
+							{ source }
+						</span>
+						<div className='testimonial-image'>
+							<p className='image-wrapper'>
+								<img
+									src={ imgURL }
+									alt={ imgAlt }
+								/>
+							</p>
+						</div>
+					</div>
+				)}
 			</div>
 		);
 	},
@@ -180,19 +252,30 @@ registerBlockType( 'ssm/block-testimonial', {
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
 		var quoteSign = props.attributes.quoteSign;
+		var imgURL = props.attributes.imgURL;
+		var imgAlt = props.attributes.imgAlt;
 
 		return (
 			<div className='testimonial'>
 				<div className={ classnames(
-				'testimonial-frontend',
-				{ 'quote-sign': quoteSign },
-			) }>
+					'testimonial-frontend',
+					{ 'quote-sign': quoteSign },
+				) }>
 					<p className='quote'> 
 						{ quote + " - " }
 					</p>
 					<span className='source'> 
 						{ source }
 					</span>
+				</div>
+
+				<div className='testimonial-image'>
+					<p className='image-wrapper'>
+						<img
+							src={ imgURL }
+							alt={ imgAlt }
+						/>
+					</p>
 				</div>
 
 			</div>
