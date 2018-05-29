@@ -5,11 +5,13 @@
 //  Import CSS.
 import './style.scss';
 import './editor.scss';
+import classnames from 'classnames';
+import icon from './icon.js';
 
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
-const { RichText, PlainText } = wp.editor; // Import RichText And PlainText components from wp.editor
-
+const { RichText, PlainText, BlockControls, AlignmentToolbar } = wp.editor; // Import components from wp.editor
+const { Toolbar, Button, Tooltip } = wp.components;
 /**
  * Registers a new block provided a unique name and an object defining its
  * behavior. Once registered, the block is made editor as an option to any
@@ -41,6 +43,13 @@ registerBlockType( 'ssm/block-testimonial', {
 			type: 'array',
 			source: 'children',
 			selector: 'span.source'
+		},
+		alignment: {
+			type: 'string',
+		},
+		quoteSign: {
+			type: 'boolean',
+			default: false
 		}
 	},
 
@@ -56,6 +65,8 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
+		var alignment = props.attributes.alignment;
+		var quoteSign = props.attributes.quoteSign;
 		var isSelected = props.isSelected;
 
 		function onChangeQuote( newQuote ) {
@@ -66,8 +77,44 @@ registerBlockType( 'ssm/block-testimonial', {
 			props.setAttributes( { source: newSource } );
 		}
 
+		function onChangeAlignment( newAlignment ) {
+			props.setAttributes( { alignment: newAlignment } );
+		}
+
+		function toggleQuoteSign() {
+			if (quoteSign) {
+				props.setAttributes( { quoteSign: false } )
+			} else {
+				props.setAttributes( { quoteSign: true } )				
+			}
+		}
+
 		return (
-			<div className='testimonial'>
+			<div className={ classnames(
+				'testimonial',
+				{ 'quote-sign': quoteSign },
+			) }>
+
+				<BlockControls key="controls">
+					<AlignmentToolbar
+						value={ alignment }
+						onChange={ onChangeAlignment }
+					/>
+
+					<Toolbar>
+						<Tooltip text={ __( 'Add Quote Sign' )  }>
+							<Button className={ classnames(
+								'components-icon-button',
+								'components-toolbar-control',
+								{ 'active': quoteSign },
+							) }
+							onClick={ toggleQuoteSign }
+							>
+							{icon}
+							</Button>
+						</Tooltip>
+					</Toolbar>
+				</BlockControls>
 
 				{  isSelected ? (
 				
@@ -78,6 +125,7 @@ registerBlockType( 'ssm/block-testimonial', {
 						tagName = 'p'
 						className = 'quote'
 						onChange = { onChangeQuote }
+						style = { { textAlign : alignment } }
 						placeholder = { __( 'Quote' ) }
 						value = { quote }
 					/>
@@ -88,6 +136,7 @@ registerBlockType( 'ssm/block-testimonial', {
 						tagName = 'span'
 						className = 'source'
 						onChange = { onChangeSource }
+						style = { { textAlign : alignment } }
 						placeholder = { __( 'Source' ) }
 						value = { source }
 					/>
@@ -97,10 +146,10 @@ registerBlockType( 'ssm/block-testimonial', {
 
 				<div>
 
-					<p className='quote'> 
+					<p className='quote' style={ { textAlign : alignment } }> 
 						{ quote }
 					</p>
-					<span className='source'> 
+					<span className='source' style={ { textAlign : alignment } } > 
 						{ source }
 					</span>
 
@@ -124,9 +173,14 @@ registerBlockType( 'ssm/block-testimonial', {
 
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
+		var alignment = props.attributes.alignment;
+		var quoteSign = props.attributes.quoteSign;
 
 		return (
-			<div className='testimonial'>
+			<div className={ classnames(
+				'testimonial',
+				{ 'quote-sign': quoteSign },
+			) }>
 
 				<p className='quote'> 
 					{ quote }
@@ -134,7 +188,7 @@ registerBlockType( 'ssm/block-testimonial', {
 				<span className='source'> 
 					{ source }
 				</span>
-				
+
 			</div>
 		);
 	},

@@ -12,3 +12,11 @@
   max-width: 740px;
   padding: 2rem;
 }
+
+#mydiv:before {
+  content: url("data:image/svg+xml; utf8, <svg.. code here</svg>");
+  display:block;
+  width:22px;
+  height:10px;
+  margin:10px 5px 0 10px;
+}
