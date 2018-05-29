@@ -17,8 +17,3 @@
   margin: 0 auto;
   max-width: 740px;
   padding: 2rem; }
-
-.components-icon-button.active,
-.components-icon-button.active:hover {
-  background: #555d66 !important;
-  color: #ffffff !important; }

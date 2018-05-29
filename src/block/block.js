@@ -90,10 +90,7 @@ registerBlockType( 'ssm/block-testimonial', {
 		}
 
 		return (
-			<div className={ classnames(
-				'testimonial',
-				{ 'quote-sign': quoteSign },
-			) }>
+			<div className='testimonial'>
 
 				<BlockControls key="controls">
 					<AlignmentToolbar
@@ -118,7 +115,7 @@ registerBlockType( 'ssm/block-testimonial', {
 
 				{  isSelected ? (
 				
-				<div>					
+				<div className='testimonial-inner'>					
 					<h3>{ __('Quote: ') }</h3>
 							
 					<PlainText
@@ -144,15 +141,16 @@ registerBlockType( 'ssm/block-testimonial', {
 				
 			) : (
 
-				<div>
-
-					<p className='quote' style={ { textAlign : alignment } }> 
-						{ quote }
+				<div className={classnames(
+					'testimonial-outer',
+					{ 'quote-sign': quoteSign },
+				)}>
+					<p className='quote' > 
+						{ quote + " - " }
 					</p>
-					<span className='source' style={ { textAlign : alignment } } > 
+					<span className='source'> 
 						{ source }
 					</span>
-
 				</div>
 			)}
 
@@ -177,17 +175,18 @@ registerBlockType( 'ssm/block-testimonial', {
 		var quoteSign = props.attributes.quoteSign;
 
 		return (
-			<div className={ classnames(
-				'testimonial',
+			<div className='testimonial'>
+				<div className={ classnames(
+				'testimonial-frontend',
 				{ 'quote-sign': quoteSign },
 			) }>
-
-				<p className='quote'> 
-					{ quote }
-				</p>
-				<span className='source'> 
-					{ source }
-				</span>
+					<p className='quote'> 
+						{ quote + " - " }
+					</p>
+					<span className='source'> 
+						{ source }
+					</span>
+				</div>
 
 			</div>
 		);
