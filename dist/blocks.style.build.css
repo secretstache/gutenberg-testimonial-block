@@ -46,7 +46,7 @@
   margin-left: 0 !important; }
 
 .testimonial .image-wrapper {
-  width: 400px;
+  width: 300px;
   position: relative; }
 
 .testimonial .remove-image {
@@ -55,3 +55,14 @@
 
 .testimonial .testimonial-image {
   margin-top: 30px; }
+
+.ssm-panel-row {
+  margin-top: 20px; }
+
+.api-key-saved {
+  color: darkgreen;
+  padding-top: 10px;
+  font-weight: bold; }
+
+textarea.editor-plain-text.apiKey {
+  width: 150px; }

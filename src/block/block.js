@@ -2,7 +2,7 @@
  * Block: Testimonial
  */
 
-//  Import CSS.
+ //  Import CSS.
 import './style.scss';
 import './editor.scss';
 import classnames from 'classnames';
@@ -11,7 +11,7 @@ import icons from './icons.js';
 const { __ } = wp.i18n; // Import __() from wp.i18n
 const { registerBlockType } = wp.blocks; // Import registerBlockType() from wp.blocks
 const { RichText, PlainText, BlockControls, InspectorControls, MediaUpload } = wp.editor; // Import components from wp.editor
-const { Toolbar, Button, Tooltip, PanelBody, PanelRow, FormToggle } = wp.components; // Import components from wp.components
+const { Toolbar, Button, IconButton, Tooltip, PanelBody, PanelRow, FormToggle } = wp.components; // Import components from wp.components
 /**
  * Registers a new block provided a unique name and an object defining its
  * behavior. Once registered, the block is made editor as an option to any
@@ -48,6 +48,10 @@ registerBlockType( 'ssm/block-testimonial', {
 			type: 'boolean',
 			default: false
 		},
+		imageAPI: {
+			type: 'boolean',
+			default: false
+		},
 		imgURL: {
 			type: 'string',
 			source: 'attribute',
@@ -62,6 +66,20 @@ registerBlockType( 'ssm/block-testimonial', {
 			source: 'attribute',
 			attribute: 'alt',
 			selector: 'img',
+		},
+		emailAddress: {
+			type: 'array',
+			source: 'children',
+			selector: 'p.emailAddress',
+		},
+		apiKey: {
+			type: 'array',
+			source: 'children',
+			selector: 'p.apiKey',
+		},
+		apiKeySaved: {
+			type: 'boolean',
+			default: false
 		}
 	},
 
@@ -78,9 +96,13 @@ registerBlockType( 'ssm/block-testimonial', {
 		var quote = props.attributes.quote;
 		var source = props.attributes.source;
 		var quoteSign = props.attributes.quoteSign;
+		var imageAPI = props.attributes.imageAPI;
 		var imgURL = props.attributes.imgURL;
 		var imgID = props.attributes.imgID;
 		var imgAlt = props.attributes.imgAlt;
+		var emailAddress = props.attributes.emailAddress;
+		var apiKey = props.attributes.apiKey;
+		var apiKeySaved = props.attributes.apiKeySaved;
 		var isSelected = props.isSelected;
 
 		function onChangeQuote( newQuote ) {
@@ -91,12 +113,31 @@ registerBlockType( 'ssm/block-testimonial', {
 			props.setAttributes( { source: newSource } );
 		}
 
+		function onChangeEmailAddress( newEmailAddress ) {
+			props.setAttributes( { emailAddress: newEmailAddress } );			
+		}
+
+		function onChangeApiKey( newApiKey ) {
+			props.setAttributes( { apiKey: newApiKey } );
+		}
+
 		function toggleQuoteSign() {
 			if (quoteSign) {
 				props.setAttributes( { quoteSign: false } )
 			} else {
 				props.setAttributes( { quoteSign: true } )				
 			}
+		}
+		
+
+		function toggleImageAPI() {
+			if (imageAPI) {
+				props.setAttributes( { imageAPI: false } )
+				props.setAttributes( { imgURL: null, imgID: null, imgAlt: null} )
+			} else {
+				props.setAttributes( { imageAPI: true } )					
+			}
+
 		}
 
 		function onSelectImage( img ) {
@@ -107,9 +148,37 @@ registerBlockType( 'ssm/block-testimonial', {
 			props.setAttributes( { imgURL: null, imgID: null, imgAlt: null} )
 		}
 
+		function saveAPIKey( e ) {
+			var key = e.target.dataset.key;
+			props.setAttributes( { apiKeySaved: true } )
+			console.log(key);
+		}
+
+		function callFullcontactAPI() {
+
+			if (imageAPI) {
+
+				fetch('https://api.fullcontact.com/v3/person.enrich', {
+					method: 'POST',
+					headers: {
+						"Authorization": "Bearer " + apiKey
+					},
+					body: JSON.stringify({
+						"email": emailAddress,
+					})
+				}).then(response => response.json()).then(data => {
+
+					props.setAttributes({
+						imgURL: data.avatar,
+						imgID: 'fullcontactImage',
+						imgAlt: data.fullName
+					})
+				})
+			}
+		}
+
 		return (
 			<div className='testimonial'>
-
 				<InspectorControls>
 					<PanelBody
 						title={ __( 'Basic' ) }
@@ -127,6 +196,62 @@ registerBlockType( 'ssm/block-testimonial', {
 								onChange={ toggleQuoteSign }
 							/>
 						</PanelRow>
+
+						<PanelRow>
+							<label
+								htmlFor="image-api-form-toggle"
+							>
+								{ __( 'Upload Image' ) }
+							</label>
+							<FormToggle
+								id="image-api-form-toggle"
+								label={ __( 'Image API') }
+								checked={ imageAPI }
+								onChange={ toggleImageAPI }
+							/>
+							<label
+								htmlFor="image-api-form-toggle"
+							>
+								{ __( '  FullContact API' ) }
+							</label>
+						</PanelRow>
+
+						{ imageAPI ? (
+							<div className="ssm-panel-row">
+								<PanelRow>
+								<label
+									htmlFor="apiKey"
+								>
+									{ __( 'API Key' ) }
+								</label>
+								</PanelRow>
+
+								<PanelRow>
+									<PlainText
+										tagName = 'p'
+										className = 'apiKey'
+										id = 'apiKey'
+										onChange = { onChangeApiKey }
+										placeholder = { __( 'API Key' ) }
+										value = { apiKey }
+									/>
+								{ ! apiKeySaved ? (
+									<Button
+										data-key={apiKey}
+										className="components-button button button-small"
+										onClick={ saveAPIKey }>
+										Save
+									</Button>
+								) : ( 
+									<p className="api-key-saved">Saved!</p>
+								)}
+
+								</PanelRow>
+							</div>
+						) : (
+							null
+						)}
+						
 					</PanelBody>
 				</InspectorControls>
 
@@ -172,52 +297,75 @@ registerBlockType( 'ssm/block-testimonial', {
 							value = { source }
 						/>
 
-						{ ! imgID ? (
-							<div className="testimonial-image">
-								<MediaUpload
-									onSelect={ onSelectImage }
-									type="image"
-									value={ props.attributes.imgID }
-									render={ ( { open } ) => (
-										<Button
-											className="components-button button button-medium"
-											onClick={ open }>
-											Upload Image
-										</Button>
-									) }
-								/>
-							</div>
+					{ ! imageAPI ? ( 
 
-							) : (
+						<div className="upload-image-section">
+					
+							{ ! imgID ? (
 								<div className="testimonial-image">
-									<p class="image-wrapper">
-										<img
-											src={ imgURL }
-											alt={ imgAlt }
-										/>
-
-										{ isSelected ? (
-
+									<MediaUpload
+										onSelect={ onSelectImage }
+										type="image"
+										value={ props.attributes.imgID }
+										render={ ( { open } ) => (
 											<Button
-												className="remove-image"
-												onClick={ onRemoveImage }
-											>
-												{ icons.remove }
+												className="components-button button button-medium"
+												onClick={ open }>
+												Upload Image
 											</Button>
-
-										) : null }
-
-									</p>
+										) }
+									/>
 								</div>
-							)}
+
+								) : (
+									<div className="testimonial-image">
+										<p class="image-wrapper">
+											<img
+												src={ imgURL }
+												alt={ imgAlt }
+											/>
+
+											{ isSelected ? (
+
+												<Button
+													className="remove-image"
+													onClick={ onRemoveImage }
+												>
+													{ icons.remove }
+												</Button>
+
+											) : null }
+
+										</p>
+									</div>
+								)}
+							</div>
+					) : (
+						<div className="fullcontact-api-section">
+							
+							<h3>{ __('Email Address: ') }</h3>
+							
+							<PlainText
+								tagName = 'p'
+								className = 'emailAddress'
+								onChange = { onChangeEmailAddress }
+								placeholder = { __( 'Email Address' ) }
+								value = { emailAddress }
+							/>
+						</div>
+					)}
 					</div>
 				
 				) : (
+					
 
 					<div className={classnames(
 						'testimonial-outer',
 						{ 'quote-sign': quoteSign },
 					)}>
+
+					{callFullcontactAPI()}
+						
 						<p className='quote' > 
 							{ quote + " - " }
 						</p>

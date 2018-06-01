@@ -52,6 +52,8 @@ function testimonial_cgb_editor_assets() {
 		true // Enqueue the script in the footer.
 	);
 
+	wp_localize_script('testimonial-cgb-block-js', 'globals', array('api_key' => 'ywegrvweyuvwgerycwyvrtehvw'));
+
 	// Styles.
 	wp_enqueue_style(
 		'testimonial-cgb-block-editor-css', // Handle.
